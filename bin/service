@@ -2,7 +2,9 @@
 
 var lib = require('../index');
 
-var conf = require("../config.servioticy");
+var conf = {
+    debug: process.env.DEBUG
+};
 lib.config(conf).then(function(mgr) {
 
     var arg = process.argv[2];
