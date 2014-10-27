@@ -28,6 +28,7 @@
         }
     ],
     "main": "src/index.js",
+    "bin": { "servioticy" : "./bin/service" },
     "engines": {
         "node": ">= 0.6.x"
     },

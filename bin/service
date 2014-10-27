@@ -1,5 +1,10 @@
 #!/usr/bin/node
 
+if(process.getuid() > 0) {
+    console.log("Need to be root");
+    process.exit();
+}
+
 var lib = require('../index');
 
 var conf = {
