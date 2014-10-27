@@ -39,7 +39,7 @@ module.exports.run = function(component, success, fail) {
         var options = {
             headers: {},
             method: method,
-            body: body,
+            data: body,
         };
 
         restler.request(component.info.url + "/" + name + "/", options).on("complete", then);
@@ -61,24 +61,27 @@ module.exports.run = function(component, success, fail) {
 
         if(_failed) return;
 
-        Index.exists(name, function(err, res) {
+        Index.exists(name, function(res) {
 
             if(res.statusCode === 200) {
 
-                Index.delete(name, function(err, res) {
+                Index.delete(name, function(res) {
 
-                    if(err instanceof Error) throw err;
+                    console.log(res);
+                    if(res instanceof Error) throw res;
 
-                    Index.create(name, indexes[name], function(err, res) {
-                        if(err instanceof Error) throw err;
+                    Index.create(name, indexes[name], function(res) {
+                        if(res instanceof Error) throw res;
+                        console.log(res);
                         _check();
                     });
                 });
             }
             else {
 
-                Index.create(name, indexes[name], function(err, res) {
-                    if(err instanceof Error) throw err;
+                Index.create(name, indexes[name], function(res) {
+                    if(res instanceof Error) throw res;
+                    console.log(res);
                     _check();
                 });
             }

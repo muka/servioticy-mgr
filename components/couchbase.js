@@ -12,6 +12,7 @@ lib.info = {
     command: "/etc/init.d/couchbase-server",
 
     url: "http://localhost:8092",
+    url_cluster: "http://localhost:8091",
 
     cluster: "localhost",
     user: "admin",
@@ -29,8 +30,8 @@ lib.info = {
     ],
 
     views: {
-        index: {"views":{"byIndex":{"map":"function (doc, meta) {\n emit(meta.id, null);\n } "}}},
-        user: {"views":{"byUser":{"map":"function (doc, meta) {\n emit(doc.userId, meta.id);\n } "}}},
+        index: {"views":{"byIndex":{"map":"function (doc, meta) { emit(meta.id, null); }"}}},
+        user: {"views":{"byUser":{"map":"function (doc, meta) { emit(doc.userId, meta.id); }"}}},
     }
 };
 

@@ -1,4 +1,3 @@
-
 var config = {};
 
 var child_process = require('child_process');
@@ -91,17 +90,17 @@ module.exports.config = function(_conf) {
 
             return Promise.resolve(true);
         };
-        lib.setup = function() {
+        lib.setup = function(component_name) {
 
-            d("**************************************\n");
-            d("Forcing components setup. Service(s) will be restarted");
-            d("\n !!! This may be a destructive operation. \n\nWaiting 5 seconds before proceed (CTRL+C to quit) !!! \n");
-            d("\n**************************************");
+            console.warn("**************************************\n");
+            console.warn("Forcing components setup. Service(s) will be restarted");
+            console.warn("\n !!! This may be a destructive operation. \n\nWaiting 5 seconds before proceed (CTRL+C to quit) !!! \n");
+            console.warn("\n**************************************");
 
             return new Promise(function(OK, NO) {
                 setTimeout(function() {
                     lib.forceSetup = true;
-                    lib.restart().then(OK).catch(NO);
+                    handleRequest("restart", component_name).then(OK).catch(NO);
                 }, 5000);
             });
         };

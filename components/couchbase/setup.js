@@ -42,11 +42,18 @@ module.exports.run = function(component, success, fail) {
         ]);
     };
 
-    var _request = function(url, method, data, then) {
+    var _request = function(url, method, data, h, then) {
+
+        if(typeof h === 'function') {
+            then = h;
+            h = { 'Content-Type': 'application/json' };
+        }
+
         restler.request(url, {
 
             method: method || "GET",
-            body: data || null,
+            data: data || null,
+            headers: h,
             username: component.info.user,
             password: component.info.password,
 
@@ -96,14 +103,19 @@ module.exports.run = function(component, success, fail) {
             var views = component.info.views;
 
             return new Promise(function(ok, no) {
+                console.log("Creating views");
 
                 _request(component.info.url + "/serviceobjects/_design/user",
                     "PUT", JSON.stringify(views.user), function(res) {
+
+                    console.log(res);
 
                     if(res instanceof Error) return no(res);
 
                     _request(component.info.url + "/serviceobjects/_design/index",
                         "PUT", JSON.stringify(views.index), function(res) {
+
+                        console.log(res);
 
                         if(res instanceof Error) return no(res);
 
@@ -128,11 +140,15 @@ module.exports.run = function(component, success, fail) {
                     password: component.info.password,
                 };
 
-                _request(component.info.url + "/pools/default/remoteClusters", "POST", data, function(res) {
+
+                var h = { "content-type": "application/x-www-form-urlencoded" };
+                _request(component.info.url_cluster + "/pools/default/remoteClusters", "POST", data, h, function(res) {
 
                     if(res instanceof Error) return no(res);
 
-                    console.log("Create Links");
+                    console.log(res);
+
+                    console.log("Create Remote cluster");
 
                     var data = {
                         fromBucket: "soupdates",
@@ -142,9 +158,11 @@ module.exports.run = function(component, success, fail) {
                         type: "capi"
                     };
 
-                    _request(component.info.url + "/controller/createReplication", "POST", data, function(res) {
+                    _request(component.info.url_cluster + "/controller/createReplication", "POST", data, h, function(res) {
 
                         if(res instanceof Error) return no(res);
+
+                        console.log(res, typeof res);
 
                         var data  = {
                             fromBucket: "subscriptions",
@@ -154,7 +172,9 @@ module.exports.run = function(component, success, fail) {
                             type: "capi"
                         };
 
-                        _request(component.info.url + "/controller/createReplication", "POST", data, function(res) {
+                        _request(component.info.url_cluster + "/controller/createReplication", "POST", data, h, function(res) {
+
+                            console.log(res, typeof res);
 
                             if(res instanceof Error) return no(res);
 
