@@ -37,16 +37,18 @@ Is node bridge up?
 `sudo servioticy status bridge`
 
 
-###Avail services
+###List of managed services
 
-- userDB
-- storm
-- kestrel
-- jetty
-- elasticsearch
-- couchbase
-- bridge
-- apollo
+Managed services by startup order:
+
+- [90] elasticsearch
+- [100] couchbase
+- [150] userDB
+- [200] jetty
+- [300] apollo
+- [350] kestrel
+- [400] storm
+- [500] bridge
 
 ###Adding more services
 
