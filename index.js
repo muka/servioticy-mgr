@@ -10,7 +10,7 @@ DEBUG && Promise.longStackTraces();
 
 var d = module.exports.dbg = function() {
 
-    if(arguments.length === 1 && typeof arguments[0] === 'string') {
+    if(arguments.length === 1 && typeof arguments[0] === 'string' && arguments[0].length) {
         console.info("  * " + arguments[0]);
     }
     else {
@@ -39,6 +39,9 @@ module.exports.config = function(_conf) {
 
         var handleRequest = function(op, component_name) {
 
+            lib.op = op;
+            lib.component_name = component_name;
+
 //            d("%s %s", op, component_name ? component_name : "");
 
             return Promise.all(list)
@@ -51,11 +54,12 @@ module.exports.config = function(_conf) {
                     return component.name === component_name;
                 })
                 .each(function(component) {
-                    d("[%s] Executing %s for %s", component.priority, op, component.name);
-                    return component[op]()
+                    d("[%s] %s %s", component.priority, op, component.name);
+
+                    return component[op]();
                 })
                 .then(function() {
-                    d("\nDone!");
+                    d("\n", "Done.");
                 })
         };
 
