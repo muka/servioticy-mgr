@@ -91,6 +91,20 @@ module.exports.config = function(_conf) {
 
             return Promise.resolve(true);
         };
+        lib.setup = function() {
+
+            d("**************************************\n");
+            d("Forcing components setup. Service(s) will be restarted");
+            d("\n !!! This may be a destructive operation. \n\nWaiting 5 seconds before proceed (CTRL+C to quit) !!! \n");
+            d("\n**************************************");
+
+            return new Promise(function(OK, NO) {
+                setTimeout(function() {
+                    lib.forceSetup = true;
+                    lib.restart().then(OK).catch(NO);
+                }, 5000);
+            });
+        };
 
         return lib;
     });
