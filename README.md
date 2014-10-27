@@ -1,7 +1,9 @@
 servioticy-mgr
 ==============
 
-Minimal service manager for servioticy
+Minimal service manager for servioticy.
+
+Intended to be used with https://github.com/servioticy/servioticy-vagrant
 
 **Not stable, but works**
 
