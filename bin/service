@@ -15,8 +15,7 @@ lib.config(conf).then(function(mgr) {
     var arg = process.argv[2];
     if(typeof mgr[arg] === 'function')
         mgr[arg](process.argv[3])
-            //.then(console.log);
     else
-        console.log("Avail arguments: start | stop | restart | status [component]\nEg. service start elasticsearch");
+        console.log("Avail arguments: services | start | stop | restart | status [component]\nEg. service start elasticsearch");
 
 }).catch(console.error);

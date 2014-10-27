@@ -48,6 +48,9 @@ module.exports.config = function(_conf) {
                     d("[%s] Executing %s for %s", component.priority, op, component.name);
                     return component[op]()
                 })
+                .then(function() {
+
+                })
         };
 
         lib.start = function(component_name) {
@@ -64,6 +67,19 @@ module.exports.config = function(_conf) {
         };
         lib.status = function(component_name) {
             return handleRequest("status", component_name)
+        };
+        lib.services = function() {
+
+            var rows = [
+                "Managed services, by priority:"
+            ];
+            list.forEach(function(c) {
+                rows.push( " * [" + c.priority + "] " + c.name );
+            });
+
+            console.log(rows.join("\n"));
+
+            return Promise.resolve(true);
         };
 
         return lib;

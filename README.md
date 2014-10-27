@@ -7,19 +7,35 @@ Intended to be used with https://github.com/servioticy/servioticy-vagrant
 
 **Not stable, but works**
 
-Usage:
+##Install
 
-`./bin/service start`
+`sudo npm i -g muka/servioticy-mgr`
 
-`./bin/service stop`
+##Usage
 
-`./bin/service restart`
+`sudo servioticy start`
 
-`./bin/service status`
+`sudo servioticy stop`
+
+`sudo servioticy restart`
+
+`sudo servioticy status`
+
 
 ###Per service
 
-`./bin/service start elasticsearch`
+List managed services:
+
+`sudo servioticy services`
+
+Start elastic search
+
+`sudo servioticy start elasticsearch`
+
+Is node bridge up?
+
+`sudo servioticy status bridge`
+
 
 ###Avail services
 
@@ -38,7 +54,7 @@ See `./components/` js for an overview of how to add other components.
 
 priority indicates the order of startup (where lower comes first)
 
-###License
+##License
 
 Apache2
 
