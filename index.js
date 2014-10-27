@@ -9,7 +9,13 @@ var DEBUG = true;
 DEBUG && Promise.longStackTraces();
 
 var d = module.exports.dbg = function() {
-    config.debug && console.log.apply(null, arguments);
+
+    if(arguments.length === 1 && typeof arguments[0] === 'string') {
+        console.info("  * " + arguments[0]);
+    }
+    else {
+        config.debug && console.log.apply(null, arguments);
+    }
 };
 
 module.exports.getConfig = function() { return config; };
@@ -33,7 +39,7 @@ module.exports.config = function(_conf) {
 
         var handleRequest = function(op, component_name) {
 
-            d("%s %s", op, component_name ? component_name : "");
+//            d("%s %s", op, component_name ? component_name : "");
 
             return Promise.all(list)
                 .filter(function(component) {
@@ -49,7 +55,7 @@ module.exports.config = function(_conf) {
                     return component[op]()
                 })
                 .then(function() {
-
+                    d("\nDone!");
                 })
         };
 

@@ -11,8 +11,6 @@ module.exports.run = function(component, success, fail) {
 
     var _check = function(err, res) {
 
-        console.log(err);
-
         if(err) {
             _failed = true;
             fail(err);
