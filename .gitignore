@@ -1,3 +1,4 @@
 node_modules
 nbproject
 config.*
+tmp/*.json
