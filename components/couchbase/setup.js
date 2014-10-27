@@ -56,7 +56,7 @@ module.exports.run = function(component, success, fail) {
         .then(function() {
             return couchbase_cli("bucket-list").then(function(response) {
 
-                console.log(response);
+//                console.log(response);
 
                 var list = response.split("\n");
                 var bucketsAvail = {};

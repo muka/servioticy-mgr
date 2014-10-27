@@ -7,14 +7,16 @@ var util = require('../lib/util');
 
 lib.info = {
 
-    name: "jetty",
-    priority: 200,
-    
-    command: "/etc/init.d/jetty",
+    name: "userDB",
+    priority: 150,
+
+    cwd: "/data/userDB",
+    command: "python",
+    args: [ "userDB.py" ],
 
     url: "http://localhost:8080",
 
-    waitPort: 8080,
+    waitPort: 5010,
 };
 
 lib.setup = function(component) {
@@ -27,16 +29,24 @@ lib.ready = function() {
 };
 
 lib.status = function() {
-    var search_pattern = "java.*jetty";
+    var search_pattern = "python userDB.py";
     return util.ps(search_pattern);
 };
 
 lib.start = function() {
-    var op = "start";
-    return util.execute(lib.info.command, [op]);
+    var op = "run";
+    return util.launch(lib.info.command, lib.info.args, {
+        cwd: lib.info.cwd
+    }, 2500);
 };
 
 lib.stop = function() {
-    var op = "stop";
-    return util.execute(lib.info.command, [op]);
+    return lib.status().then(function(running) {
+
+        if(!running || !running.pid) {
+            return Promise.resolve();
+        }
+
+        return util.kill(running.pid);
+    });
 };

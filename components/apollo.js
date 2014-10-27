@@ -8,7 +8,7 @@ var util = require('../lib/util');
 lib.info = {
 
     name: "apollo",
-    priority: 150,
+    priority: 300,
     command: "/opt/servibroker/bin/apollo-broker",
 
     url: "http://localhost:8080",
@@ -53,9 +53,8 @@ lib.stop = function() {
 
         });
 
-        if(!pids.length) {
-            return Promise.resolve();
-        }
+        return util.kill(pids);
+
 
         return Promise.all(pids).map(function(pid) {
             return util.execute("kill", [ "-9", pid ]);

@@ -44,10 +44,10 @@ module.exports.config = function(_conf) {
 
                     return component.name === component_name;
                 })
-                .map(function(component) {
-
+                .each(function(component) {
+                    d("[%s] Executing %s for %s", component.priority, op, component.name);
                     return component[op]()
-                }, { concurrency: 1 })
+                })
         };
 
         lib.start = function(component_name) {
