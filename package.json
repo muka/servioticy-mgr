@@ -40,10 +40,5 @@
     "devDependencies": {
     },
     "private": true,
-    "scripts": {
-        "start": "node bin/run start",
-        "stop": "node bin/run start",
-        "status": "node bin/run status",
-        "restart": "node bin/run restart"
-    }
+    "scripts": {}
 }
