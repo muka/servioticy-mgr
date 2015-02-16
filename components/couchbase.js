@@ -21,6 +21,8 @@ lib.info = {
     waitPort: 8091,
     dataPath: "/data/couchbase",
 
+    hostnameAlias: 'servioticy.local',
+
     buckets: [
         "serviceobjects",
         "privatebucket",

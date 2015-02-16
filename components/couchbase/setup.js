@@ -59,7 +59,7 @@ module.exports.run = function(component, success, fail) {
 
         }).on('complete', then);
 
-    }
+    };
 
     console.log("Node initialization");
     couchbase_cli("node-init", [ "--node-init-data-path=" + component.info.dataPath ])
@@ -191,4 +191,25 @@ module.exports.run = function(component, success, fail) {
 
         .then(success)
         .catch(fail)
+        .finally(function() {
+            return new Promise(function(ok, ko) {
+
+                // http://docs.couchbase.com/admin/admin/Install/hostnames.html
+                // curl -v -X POST -u admin:password http://127.0.0.1:8091/node/controller/rename -d hostname=servioticy.local
+                console.log("Setting hostname alias to " + component.info.hostnameAlias);
+                _request(component.info.url + "/node/controller/rename",
+                            "POST", JSON.stringify({ hostname: component.info.hostnameAlias }), function(res) {
+
+                    if(res instanceof Error) {
+                        console.log("Error setting alias");
+                        return ko();
+                    }
+
+                    console.log("alias set");
+                    return ok();
+                });
+
+            });
+
+        });
 };
