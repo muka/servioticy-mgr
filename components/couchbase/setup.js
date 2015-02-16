@@ -27,11 +27,18 @@ module.exports.run = function(component, success, fail) {
         return util.execute("/opt/couchbase/bin/couchbase-cli", args);
     };
 
-    var create_bucket = function(name, ram, replica, type) {
+    var create_bucket = function(opts) {
 
-        ram = ram || 200;
-        replica = replica || 1;
-        type = type || "couchbase";
+        var name = opts.name;
+
+        if(typeof opts === 'string') {
+            name = opts;
+            opts = {};
+        }
+
+        var ram = opts.ram || 200;
+        var replica = opts.replica || 1;
+        var type = opts.type || "couchbase";
 
         console.log("Create bucket " + name);
         return couchbase_cli("bucket-create", [
@@ -59,6 +66,15 @@ module.exports.run = function(component, success, fail) {
 
         }).on('complete', then);
 
+    };
+
+    var _promiseRequest = function(url, method, data, h) {
+        return new Promise(function(ok, ko) {
+            _request(url, method, data, h, function(res) {
+                if(res instanceof Error) return ko(res);
+                return ok(res);
+            });
+        });
     };
 
     console.log("Node initialization");
@@ -93,11 +109,36 @@ module.exports.run = function(component, success, fail) {
                     }
                 });
 
-                return Promise.all(bucketNeeded).map(create_bucket);
+                return Promise.all(bucketNeeded).map(function(name) {
+                    return create_bucket(name);
+                });
             })
 
         })
+        .then(function() {
+            return new Promise(function(ok, ko) {
 
+                // http://docs.couchbase.com/admin/admin/Install/hostnames.html
+                // curl -v -X POST -u admin:password http://127.0.0.1:8091/node/controller/rename -d hostname=servioticy.local
+                console.log("Setting hostname alias to " + component.info.hostnameAlias);
+                _request(component.info.url + "/node/controller/rename",
+                            "POST", JSON.stringify({ hostname: component.info.hostnameAlias }), function(res) {
+
+                    if(res instanceof Error) {
+                        console.log("Error setting alias");
+                        return ko();
+                    }
+
+                    component.info.url = component.info.url.replace('localhost', component.info.hostnameAlias);
+                    component.info.url_cluster = component.info.url_cluster.replace('localhost', component.info.hostnameAlias);
+
+                    console.log("alias set, using  " + component.info.url);
+                    return ok();
+                });
+
+            });
+
+        })
         .then(function() {
 
             var views = component.info.views;
@@ -133,56 +174,61 @@ module.exports.run = function(component, success, fail) {
                 console.log("Create External Cluster Reference");
                 // http://docs.couchbase.com/admin/admin/REST/rest-xdcr-data-encrypt.html
 
-                var data = {
-                    name: "serviolastic",
-                    hostname: "localhost:9091",
-                    username: component.info.user,
-                    password: component.info.password,
+
+                var urlClusterApi = component.info.url_cluster + "/pools/default/remoteClusters";
+
+                var listXDCR = function() {
+                    return _promiseRequest(urlClusterApi, "GET", null, {});
                 };
 
+                var createXDCR = function() {
 
-                var h = { "content-type": "application/x-www-form-urlencoded" };
-                _request(component.info.url_cluster + "/pools/default/remoteClusters", "POST", data, h, function(res) {
+                    console.log("Creating replica " + component.info.xdcr.name);
 
-                    if(res instanceof Error) return no(res);
+                    var h = {
+                        "content-type": "application/x-www-form-urlencoded"
+                    };
 
-                    console.log(res);
-
-                    console.log("Create Remote cluster");
-
+                    var _host = (component.info.url_cluster.match(/localhost/)) ? 'localhost' : component.info.hostnameAlias;
                     var data = {
-                        fromBucket: "soupdates",
-                        toCluster: "serviolastic",
-                        toBucket: "soupdates",
+                        name: component.info.xdcr.name,
+                        hostname: _host + ":" + component.info.xdcr.port,
+                        username: component.info.user,
+                        password: component.info.password,
+                    };
+
+                    return _promiseRequest(urlClusterApi, "POST", data, h);
+                };
+
+                var createDataReplica = function() {
+
+                    var h = {
+                        "content-type": "application/x-www-form-urlencoded"
+                    };
+
+                    var data  = {
+                        fromBucket: "subscriptions",
+                        toCluster: component.info.xdcr.name,
+                        toBucket:"subscriptions",
                         replicationType: "continuous",
                         type: "capi"
                     };
 
-                    _request(component.info.url_cluster + "/controller/createReplication", "POST", data, h, function(res) {
+                    console.log("Creating data replica for " + data.fromBucket);
 
-                        if(res instanceof Error) return no(res);
+                    return _promiseRequest(component.info.url_cluster + "/controller/createReplication", "POST", data, h);
+                };
 
-                        console.log(res, typeof res);
+                return listXDCR().then(function(res) {
 
-                        var data  = {
-                            fromBucket: "subscriptions",
-                            toCluster: "serviolastic",
-                            toBucket:"subscriptions",
-                            replicationType: "continuous",
-                            type: "capi"
-                        };
+                    if(!res.length) {
+                        return createXDCR().then(createDataReplica);
+                    }
+                    else {
+                        console.log("Reference already existing for " + component.info.xdcr.name);
+                    }
 
-                        _request(component.info.url_cluster + "/controller/createReplication", "POST", data, h, function(res) {
-
-                            console.log(res, typeof res);
-
-                            if(res instanceof Error) return no(res);
-
-                            ok();
-
-                        });
-
-                    });
+                    return Promise.resolve();
                 });
 
             });
@@ -192,24 +238,6 @@ module.exports.run = function(component, success, fail) {
         .then(success)
         .catch(fail)
         .finally(function() {
-            return new Promise(function(ok, ko) {
-
-                // http://docs.couchbase.com/admin/admin/Install/hostnames.html
-                // curl -v -X POST -u admin:password http://127.0.0.1:8091/node/controller/rename -d hostname=servioticy.local
-                console.log("Setting hostname alias to " + component.info.hostnameAlias);
-                _request(component.info.url + "/node/controller/rename",
-                            "POST", JSON.stringify({ hostname: component.info.hostnameAlias }), function(res) {
-
-                    if(res instanceof Error) {
-                        console.log("Error setting alias");
-                        return ko();
-                    }
-
-                    console.log("alias set");
-                    return ok();
-                });
-
-            });
-
+            console.log("Completed");
         });
 };

@@ -22,7 +22,10 @@ lib.info = {
     dataPath: "/data/couchbase",
 
     hostnameAlias: 'servioticy.local',
-
+    xdcr: {
+        name: "serviolastic",
+        port: "9091"
+    },
     buckets: [
         "serviceobjects",
         "privatebucket",
