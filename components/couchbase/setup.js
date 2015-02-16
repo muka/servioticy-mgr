@@ -169,7 +169,7 @@ module.exports.run = function(component, success, fail) {
 
         .then(function() {
 
-            return new Promise(function(ok, no) {
+            return new Promise(function(ok, ko) {
 
                 console.log("Create External Cluster Reference");
                 // http://docs.couchbase.com/admin/admin/REST/rest-xdcr-data-encrypt.html
@@ -229,9 +229,9 @@ module.exports.run = function(component, success, fail) {
                     }
 
                     return Promise.resolve();
-                });
+                }).then(ok).catch(ko);
 
-            });
+            })
 
         })
 
