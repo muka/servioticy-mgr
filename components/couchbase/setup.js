@@ -171,64 +171,130 @@ module.exports.run = function(component, success, fail) {
 
             return new Promise(function(ok, ko) {
 
-                console.log("Create External Cluster Reference");
+                console.log("Create External Cluster Reference, ");
                 // http://docs.couchbase.com/admin/admin/REST/rest-xdcr-data-encrypt.html
 
-
                 var urlClusterApi = component.info.url_cluster + "/pools/default/remoteClusters";
+                var taskList = component.info.url_cluster + "/pools/default/tasks";
 
                 var listXDCR = function() {
                     return _promiseRequest(urlClusterApi, "GET", null, {});
                 };
 
-                var createXDCR = function() {
+                var destinationCluster = {
+                    create: function() {
 
-                    console.log("Creating replica " + component.info.xdcr.name);
+                        console.log("Creating destination cluster");
 
-                    var h = {
-                        "content-type": "application/x-www-form-urlencoded"
-                    };
+                        var h = {
+                            "content-type": "application/x-www-form-urlencoded"
+                        };
 
-                    var _host = (component.info.url_cluster.match(/localhost/)) ? 'localhost' : component.info.hostnameAlias;
-                    var data = {
-                        name: component.info.xdcr.name,
-                        hostname: _host + ":" + component.info.xdcr.port,
-                        username: component.info.user,
-                        password: component.info.password,
-                    };
+                        var _host = (component.info.url_cluster.match(/localhost/)) ? 'localhost' : component.info.hostnameAlias;
+                        var data = {
+                            name: component.info.xdcr.name,
+                            hostname: _host + ":" + component.info.xdcr.port,
+                            username: component.info.user,
+                            password: component.info.password,
+                        };
 
-                    return _promiseRequest(urlClusterApi, "POST", data, h);
+                        return _promiseRequest(urlClusterApi, "POST", data, h);
+
+                    },
+                    remove: function(cluster) {
+
+                        console.log("Deleting XDCR " + cluster.name + " with uuid " + cluster.uuid);
+
+                        var h = {
+                            "content-type": "application/x-www-form-urlencoded"
+                        };
+
+                        // http://docs.couchbase.com/admin/admin/REST/rest-xdcr-intro.html
+                        // http://docs.couchbase.com/admin/admin/REST/rest-xdcr-delete-ref.html
+                        var _uri = urlClusterApi + "/" + cluster.name;
+
+                        return _promiseRequest(_uri, "DELETE", {}, h);
+                    }
                 };
 
-                var createDataReplica = function() {
+                var replication = {
+                    create: function() {
 
-                    var h = {
-                        "content-type": "application/x-www-form-urlencoded"
-                    };
+                        console.log("Creating replication for " + component.info.xdcr.name);
 
-                    var data  = {
-                        fromBucket: "subscriptions",
-                        toCluster: component.info.xdcr.name,
-                        toBucket:"subscriptions",
-                        replicationType: "continuous",
-                        type: "capi"
-                    };
+                        var h = {
+                            "content-type": "application/x-www-form-urlencoded"
+                        };
 
-                    console.log("Creating data replica for " + data.fromBucket);
+                        var data  = component.info.xdcr.config;
 
-                    return _promiseRequest(component.info.url_cluster + "/controller/createReplication", "POST", data, h);
+                        return _promiseRequest(component.info.url_cluster + "/controller/createReplication", "POST", data, h);
+                    },
+                    remove: function(cluster) {
+
+                        console.log("Deleting replica of " + component.info.xdcr.name + " to "  + cluster.name + " with uuid " + cluster.uuid);
+
+                        var h = {
+                            "content-type": "application/x-www-form-urlencoded"
+                        };
+
+                        // http://docs.couchbase.com/admin/admin/REST/rest-xdcr-delete-replication.html
+                        // eg [uuid]%2F[local-bucket-name]%2F[remote-bucket-name]
+                        // eg /controller/cancelXDCR/2cf47a1c85c532768aeb540b7a02ff57%2Fsubscriptions%2Fsubscriptions
+                        var _uri = component.info.url_cluster + "/controller/cancelXDCR/"
+                                        + cluster.uuid + "%2F"
+                                        + component.info.xdcr.config.fromBucket + "%2F"
+                                        + component.info.xdcr.config.toBucket;
+                        console.log("DELETE " + _uri);
+                        return _promiseRequest(_uri, "DELETE", {}, h);
+                    },
                 };
 
-                return listXDCR().then(function(res) {
+                return listXDCR().then(function(rawres) {
 
-                    if(!res.length) {
-                        return createXDCR().then(createDataReplica);
-                    }
-                    else {
-                        console.log("Reference already existing for " + component.info.xdcr.name);
+                    var _createXDCR = function() {
+                        return destinationCluster.create()
+                            .then(function(raw) {
+                                console.log("Result", raw);
+                                return replication.create();
+                            })
+                            .then(function(raw) {
+                                console.log("Result", raw);
+                                return Promise.resolve();
+                            });
+                    };
+
+                    var _removeXDCR = function() {
+                        return replication.remove(replicaInfo)
+                            .then(function(raw) {
+                                console.log("Result", raw);
+                                return destinationCluster.remove(replicaInfo);
+                            })
+                            .then(function(raw) {
+                                console.log("Result", raw);
+                                return Promise.resolve();
+                            });
+                    };
+
+                    var res = JSON.parse(rawres);
+                    if(res.length) {
+
+                        for(var i in res) {
+
+                            var replicaInfo = res[i];
+
+                            if(replicaInfo.name === component.info.xdcr.name) {
+
+                                console.log("Removing replica for " + component.info.xdcr.name);
+
+                                return _removeXDCR(replicaInfo).then(_createXDCR);
+                            }
+
+                        }
                     }
 
-                    return Promise.resolve();
+                    return _createXDCR();
+
                 }).then(ok).catch(ko);
 
             })

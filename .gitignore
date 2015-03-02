@@ -2,3 +2,4 @@ node_modules
 nbproject
 config.*
 tmp/*.json
+npm-debug.log
