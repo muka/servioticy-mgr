@@ -116,27 +116,30 @@ module.exports.run = function(component, success, fail) {
 
         })
         .then(function() {
-            return new Promise(function(ok, ko) {
 
-                // http://docs.couchbase.com/admin/admin/Install/hostnames.html
-                // curl -v -X POST -u admin:password http://127.0.0.1:8091/node/controller/rename -d hostname=servioticy.local
-                console.log("Setting hostname alias to " + component.info.hostnameAlias);
-                _request(component.info.url + "/node/controller/rename",
-                            "POST", JSON.stringify({ hostname: component.info.hostnameAlias }), function(res) {
 
-                    if(res instanceof Error) {
-                        console.log("Error setting alias");
-                        return ko();
-                    }
 
-                    component.info.url = component.info.url.replace('localhost', component.info.hostnameAlias);
-                    component.info.url_cluster = component.info.url_cluster.replace('localhost', component.info.hostnameAlias);
+            // http://docs.couchbase.com/admin/admin/Install/hostnames.html
+            // curl -v -X POST -u admin:password http://127.0.0.1:8091/node/controller/rename -d hostname=servioticy.local
+            console.log("Setting hostname alias to " + component.info.hostnameAlias);
 
-                    console.log("alias set, using  " + component.info.url);
-                    return ok();
-                });
+            var _url = component.info.url + "/node/controller/rename";
 
-            });
+            return _promiseRequest(_url, "POST", JSON.stringify({ hostname: component.info.hostnameAlias }))
+                    .then(function(res) {
+
+                        component.info.url = component.info.url.replace('localhost', component.info.hostnameAlias);
+                        component.info.url_cluster = component.info.url_cluster.replace('localhost', component.info.hostnameAlias);
+
+                        console.log("alias set, using  " + component.info.url);
+                        
+                        return Promise.resolve();
+                    }).catch(function(err) {
+
+                        console.log("** Error setting alias!", err);
+
+                        return Promise.reject(err);
+                    });
 
         })
         .then(function() {
