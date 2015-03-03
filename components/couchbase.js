@@ -24,14 +24,23 @@ lib.info = {
     hostnameAlias: 'servioticy.local',
     xdcr: {
         name: "serviolastic",
-        port: "9091",
-        config: {
-            fromBucket: "subscriptions",
-            toCluster: "serviolastic",
-            toBucket:"subscriptions",
-            replicationType: "continuous",
-            type: "capi"
-        }
+        port: 9091,
+        replica: [
+            {
+                fromBucket: "subscriptions",
+                toCluster: "serviolastic",
+                toBucket:"subscriptions",
+                replicationType: "continuous",
+                type: "capi"
+            },
+            {
+                fromBucket: "soupdates",
+                toCluster: "serviolastic",
+                toBucket:"soupdates",
+                replicationType: "continuous",
+                type: "capi"
+            }
+        ]
     },
     buckets: [
         "serviceobjects",

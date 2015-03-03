@@ -3,7 +3,7 @@ var config = {};
 var child_process = require('child_process');
 var Promise = require('bluebird');
 
-var DEBUG = true;
+var DEBUG = process.env.DEBUG;
 
 DEBUG && Promise.longStackTraces();
 
@@ -98,10 +98,21 @@ module.exports.config = function(_conf) {
             console.warn("\n**************************************");
 
             return new Promise(function(OK, NO) {
-                setTimeout(function() {
+
+                var _run = function() {
                     lib.forceSetup = true;
                     handleRequest("restart", component_name).then(OK).catch(NO);
-                }, 5000);
+                };
+
+                if(DEBUG) {
+                    _run();
+                }
+                else {
+                    setTimeout(function() {
+                        _run();
+                    }, 5000);
+                }
+
             });
         };
 

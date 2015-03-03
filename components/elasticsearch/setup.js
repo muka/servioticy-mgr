@@ -9,6 +9,32 @@ module.exports.run = function(component, success, fail) {
     var len = keys.length, cnt = 0;
     var _failed = false;
 
+    var _createCouchbaseDocTemplate = function() {
+
+        var options = {
+            headers: {},
+            method: "POST",
+            data: JSON.stringify(require('./couchbase_template.json'))
+        };
+
+        console.log("Creating template for couchbase");
+        restler.request(component.info.url + "/_template/couchbase", options).on("complete", function(res) {
+
+            var xfailed = false;
+
+            try {
+                xfailed = JSON.parse(res);
+                xfailed = xfailed.error;
+            }
+            catch(e) {}
+
+            if(res instanceof Error || xfailed) return fail(res);
+
+            console.log("ok", res);
+            success();
+        });
+    };
+
     var _check = function(err, res) {
 
         if(err) {
@@ -19,7 +45,7 @@ module.exports.run = function(component, success, fail) {
 
         cnt++;
         if(cnt === len) {
-            !_failed && success();
+            !_failed && _createCouchbaseDocTemplate();
         }
     };
 
