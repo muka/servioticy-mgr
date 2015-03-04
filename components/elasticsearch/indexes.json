@@ -77,81 +77,171 @@
     },
     "subscriptions": {
         "mappings": {
-             "couchbaseCheckpoint": {
-                 "dynamic": "true",
-                 "_source": {
-                     "includes": [
-                         "doc.*"
-                     ]
-                 },
-                 "dynamic_templates": [
-                     {
-                         "store_no_index": {
-                             "match": "*",
-                             "mapping": {
-                                 "store": "no",
-                                 "index": "no",
-                                 "include_in_all": false
-                             }
-                         }
-                     }
-                 ]
-             },
-             "couchbaseDocument": {
-                 "_all": {
-                     "enabled": false
-                 },
-                 "dynamic": "true",
-                 "_source": {
-                     "includes": [
-                         "meta.*"
-                     ]
-                 },
-                 "dynamic_templates": [
-                     {
-                         "all_strings_to_avoid_collisions": {
-                             "match": "*",
-                             "mapping": {
-                                 "store": "no",
-                                 "index": "not_analyzed",
-                                 "include_in_all": false,
-                                 "type": "string",
-                                 "analyzer": "whitespace"
-                             }
-                         }
-                     }
-                 ],
-                 "properties": {
-                     "doc": {
-                         "properties": {
-                             "callback": {
-                                 "type": "string"
-                             },
-                             "source": {
-                                 "type": "string"
-                             },
-                             "destination": {
-                                 "type": "string"
-                             },
-                             "stream": {
-                                 "type": "string"
-                             },
-                             "customFields": {
-                                 "enabled": false
-                             }
-                         }
-                     },
-                     "meta": {
-                         "properties": {
-                             "id": {
-                                 "type": "string",
-                                 "analyzer": "whitespace"
-                             }
-                         }
-                     }
-                 }
-             }
-         }
-     }
+            "couchbaseCheckpoint": {
+                "dynamic": "true",
+                "_source": {
+                    "includes": [
+                        "doc.*"
+                    ]
+                },
+                "dynamic_templates": [
+                    {
+                        "store_no_index": {
+                            "match": "*",
+                            "mapping": {
+                                "store": "no",
+                                "index": "no",
+                                "include_in_all": false
+                            }
+                        }
+                    }
+                ]
+            },
+            "couchbaseDocument": {
+                "_all": {
+                    "enabled": false
+                },
+                "dynamic": "true",
+                "_source": {
+                    "includes": [
+                        "meta.*"
+                    ]
+                },
+                "dynamic_templates": [
+                    {
+                        "all_strings_to_avoid_collisions": {
+                            "match": "*",
+                            "mapping": {
+                                "store": "no",
+                                "index": "not_analyzed",
+                                "include_in_all": false,
+                                "type": "string",
+                                "analyzer": "whitespace"
+                            }
+                        }
+                    }
+                ],
+                "properties": {
+                    "doc": {
+                        "properties": {
+                            "callback": {
+                                "type": "string"
+                            },
+                            "source": {
+                                "type": "string"
+                            },
+                            "destination": {
+                                "type": "string"
+                            },
+                            "stream": {
+                                "type": "string"
+                            },
+                            "customFields": {
+                                "enabled": false
+                            }
+                        }
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "analyzer": "whitespace"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "popularity": {
+        "mappings": {
+            "trackingDocument": {
+                "_source": {
+                    "includes": [
+                        "meta.*",
+                        "doc.*",
+                        "_timestamp"
+                    ]
+                },
+                "_timestamp": {
+                    "enabled": true,
+                    "store": true
+                },
+                "properties": {
+                    "doc": {
+                        "properties": {
+                            "soid": {
+                                "type": "string"
+                            },
+                            "streamid": {
+                                "type": "string"
+                            },
+                            "date": {
+                                "type": "date"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "sodescriptions": {
+        "mappings": {
+            "couchbaseCheckpoint": {
+                "dynamic": "true",
+                "_source": {
+                    "includes": [
+                        "doc.*"
+                    ]
+                },
+                "dynamic_templates": [
+                    {
+                        "store_no_index": {
+                            "match": "*",
+                            "mapping": {
+                                "store": "no",
+                                "index": "no",
+                                "include_in_all": false
+                            }
+                        }
+                    }
+                ]
+            },
+            "couchbaseDocument": {
+                "_all": {
+                    "enabled": false
+                },
+                "dynamic": "false",
+                "_source": {
+                    "includes": [
+                        "meta.*"
+                    ]
+                },
+                "properties": {
+                    "doc": {
+                        "properties": {
+                            "public": {
+                                "type": "boolean"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "meta": {
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "analyzer": "whitespace"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
