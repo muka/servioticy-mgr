@@ -99,11 +99,8 @@ module.exports.run = function(component, success, fail) {
 
                     if(res instanceof Error) throw res;
 
-                    Index.create(name, indexes[name], function(res) {
-                        if(res instanceof Error) throw res;
-                        console.log(res);
-                        _check();
-                    });
+//                    console.log(res);
+                    _check();
 
                 });
             });
