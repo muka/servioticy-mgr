@@ -76,9 +76,11 @@ module.exports.run = function(component, success, fail) {
             _req("HEAD", name, then);
         },
         delete: function(name, then) {
+            console.log("Removing index %s", name);
             _req("DELETE", name, then);
         },
         create: function(name, body, then) {
+            console.log("Creating index %s", name);
             _req("PUT", name, body, then);
         }
     };
@@ -87,13 +89,14 @@ module.exports.run = function(component, success, fail) {
 
         if(_failed) return;
 
-        Index.exists(name, function(res) {
+            console.log("Delete index %s", name);
+            Index.delete(name, function(res) {
 
-            if(res.statusCode === 200) {
+                if(res instanceof Error) throw res;
 
-                Index.delete(name, function(res) {
+                console.log("Create index %s", name);
+                Index.create(name, indexes[name], function(res) {
 
-                    console.log(res);
                     if(res instanceof Error) throw res;
 
                     Index.create(name, indexes[name], function(res) {
@@ -101,18 +104,9 @@ module.exports.run = function(component, success, fail) {
                         console.log(res);
                         _check();
                     });
-                });
-            }
-            else {
 
-                Index.create(name, indexes[name], function(res) {
-                    if(res instanceof Error) throw res;
-                    console.log(res);
-                    _check();
                 });
-            }
-
-        });
+            });
 
     });
 

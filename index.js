@@ -53,7 +53,7 @@ module.exports.config = function(_conf) {
                     return component.name === component_name;
                 })
                 .each(function(component) {
-                    d("[%s] %s %s", component.priority, op, component.name);
+                    console.info("[%s] %s %s", component.priority, op, component.name);
 
                     return component[op]();
                 })
