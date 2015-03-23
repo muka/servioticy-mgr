@@ -1,4 +1,4 @@
-var lib = module.exports = {};
+var lib = module.exports;
 
 var Promise = require('bluebird');
 var child_process = require('child_process');
@@ -11,7 +11,7 @@ lib.info = {
     priority: 100,
     command: "/etc/init.d/couchbase-server",
 
-    url: "http://localhost:8092",
+    url: "http://localhost:8091",
     url_cluster: "http://localhost:8091",
 
     cluster: "localhost",

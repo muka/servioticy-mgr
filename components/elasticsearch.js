@@ -1,4 +1,4 @@
-var lib = module.exports = {};
+var lib = module.exports;
 
 var Promise = require('bluebird');
 var child_process = require('child_process');

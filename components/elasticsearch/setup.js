@@ -9,6 +9,18 @@ module.exports.run = function(component, success, fail) {
     var len = keys.length, cnt = 0;
     var _failed = false;
 
+    var restartCouchbaseXdcr = function() {
+        if(component.lib.forceSetup) {
+
+            var couchbaseComp = require('../couchbase');
+            var couchbaseSetup = require('../couchbase/setup');
+
+            couchbaseSetup.replicaSetup(couchbaseComp).then(success);
+
+        }
+        else success();
+    };
+
     var _createCouchbaseDocTemplate = function() {
 
         var options = {
@@ -31,7 +43,7 @@ module.exports.run = function(component, success, fail) {
             if(res instanceof Error || xfailed) return fail(res);
 
             console.log("ok", res);
-            success();
+            restartCouchbaseXdcr();
         });
     };
 

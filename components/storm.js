@@ -51,6 +51,12 @@ lib.start = function() {
 
     var out = require('fs').openSync(lib.info.logFile, 'w');
 
+    console.log("cwd is ", lib.info.stormHome);
+    console.log("Launch ", [lib.info.command, "jar", lib.info.dispatcherHome + "/dispatcher-0.4.1-jar-with-dependencies.jar",
+        "com.servioticy.dispatcher.DispatcherTopology",
+        "-f", lib.info.dispatcherHome + "/dispatcher.xml",
+        "-d"].join(' '));
+
     return util.launch(lib.info.command, [
         "jar", lib.info.dispatcherHome + "/dispatcher-0.4.1-jar-with-dependencies.jar",
         "com.servioticy.dispatcher.DispatcherTopology",

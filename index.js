@@ -53,13 +53,16 @@ module.exports.config = function(_conf) {
                     return component.name === component_name;
                 })
                 .each(function(component) {
+
+                    component.lib = lib;
+
                     console.info("[%s] %s %s", component.priority, op, component.name);
 
                     return component[op]();
                 })
                 .then(function() {
                     d("\n", "Done.");
-                })
+                });
         };
 
         lib.start = function(component_name) {
