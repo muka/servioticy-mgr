@@ -12,7 +12,10 @@ lib.info = {
 
     command: 'bin/storm',
     stormHome: "/opt/apache-storm-0.9.2-incubating",
-    dispatcherHome: "/opt/servioticy-dispatcher/",
+    dispatcherHome: "/opt/servioticy-dispatcher",
+
+    dispatcherJar: "dispatcher.jar",
+    dispatcherXml: "dispatcher.xml",
 
     javaHome: "/usr/lib/jvm/java-7-oracle",
     logFile: '/tmp/storm.log',
@@ -52,16 +55,17 @@ lib.start = function() {
     var out = require('fs').openSync(lib.info.logFile, 'w');
 
     console.log("cwd is ", lib.info.stormHome);
-    console.log("Launch ", [lib.info.command, "jar", lib.info.dispatcherHome + "/dispatcher.jar",
+    console.log("Launch ", [ lib.info.command,
+        "jar", lib.info.dispatcherHome + "/" + lib.info.dispatcherJar,
         "com.servioticy.dispatcher.DispatcherTopology",
-        "-f", lib.info.dispatcherHome + "/dispatcher.xml",
+        "-f", lib.info.dispatcherHome + "/" + lib.info.dispatcherXml,
         "-d"
     ].join(' '));
 
     return util.launch(lib.info.command, [
-        "jar", lib.info.dispatcherHome + "/dispatcher.jar",
+        "jar", lib.info.dispatcherHome + "/" + lib.info.dispatcherJar,
         "com.servioticy.dispatcher.DispatcherTopology",
-        "-f", lib.info.dispatcherHome + "/dispatcher.xml",
+        "-f", lib.info.dispatcherHome + "/" + lib.info.dispatcherXml,
         "-d"
     ], {
         cwd: lib.info.stormHome,
