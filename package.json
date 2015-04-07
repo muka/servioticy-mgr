@@ -1,44 +1,45 @@
 {
-    "name": "servioticy-mgr",
-    "description": "Service manager for servioticy",
-    "version": "0.0.1",
-    "homepage": "https://github.com/muka/servioticy-mgr",
-    "keywords": [
-        "servioticy",
-        "compose",
-        "iot"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/muka/servioticy-mgr.git"
-    },
-    "bugs": {
-        "url": "https://github.com/muka/servioticy-mgr/issues"
-    },
-    "author": {
-        "name": "Luca Capra",
-        "email": "luca.capra@create-net.org"
-    },
-    "contributors": [
-    ],
-    "licenses": [
-        {
-            "type": "Apache2",
-            "url": "https://github.com/muka/servioticy-mgr/blob/master/LICENSE.txt"
-        }
-    ],
-    "main": "src/index.js",
-    "bin": { "servioticy" : "./bin/service" },
-    "engines": {
-        "node": ">= 0.6.x"
-    },
-    "dependencies": {
-        "bluebird": "*",
-        "glob": "*",
-	"restler": "*"
-    },
-    "devDependencies": {
-    },
-    "private": true,
-    "scripts": {}
+  "name": "servioticy-mgr",
+  "description": "Service manager for servioticy",
+  "version": "0.0.1",
+  "homepage": "https://github.com/muka/servioticy-mgr",
+  "keywords": [
+    "servioticy",
+    "compose",
+    "iot"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/muka/servioticy-mgr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/muka/servioticy-mgr/issues"
+  },
+  "author": {
+    "name": "Luca Capra",
+    "email": "luca.capra@create-net.org"
+  },
+  "contributors": [],
+  "licenses": [
+    {
+      "type": "Apache2",
+      "url": "https://github.com/muka/servioticy-mgr/blob/master/LICENSE.txt"
+    }
+  ],
+  "main": "src/index.js",
+  "bin": {
+    "servioticy": "./bin/service"
+  },
+  "engines": {
+    "node": ">= 0.6.x"
+  },
+  "dependencies": {
+    "bluebird": "*",
+    "glob": "*",
+    "restler": "*",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "private": true,
+  "scripts": {}
 }

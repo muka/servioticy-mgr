@@ -1,27 +1,29 @@
 
 var restler = require('restler');
+var Promise = require('bluebird');
+var util = require('../../lib/util');
 
-var indexes = require('./indexes.json');
+var logger = util.logger("elasticsearch");
 
 module.exports.run = function(component, success, fail) {
 
-    var keys = Object.keys(indexes);
-    var len = keys.length, cnt = 0;
-    var _failed = false;
-
     var restartCouchbaseXdcr = function() {
-        if(component.lib.forceSetup) {
+        return new Promise(function(ok, ko) {
 
-            var couchbaseComp = require('../couchbase');
-            var couchbaseSetup = require('../couchbase/setup');
+            if(component.lib.forceSetup) {
 
-            couchbaseSetup.replicaSetup(couchbaseComp).then(success);
+                var couchbaseComp = require('../couchbase');
+                var couchbaseSetup = require('../couchbase/setup');
 
-        }
-        else success();
+                return couchbaseSetup.replicaSetup(couchbaseComp).then(ok).catch(ko);
+            }
+
+            return ok();
+        });
     };
 
-    var _createCouchbaseDocTemplate = function() {
+
+    var createCouchbaseDocTemplate = function() {
 
         var options = {
             headers: {},
@@ -29,94 +31,59 @@ module.exports.run = function(component, success, fail) {
             data: JSON.stringify(require('./couchbase_template.json'))
         };
 
-        console.log("Creating template for couchbase");
-        restler.request(component.info.url + "/_template/couchbase", options).on("complete", function(res) {
+        var uri = component.info.url + "/_template/couchbase";
 
-            var xfailed = false;
+        logger.debug("Creating template for couchbase");
+        return util.request(uri, options);
+    };
 
-            try {
-                xfailed = JSON.parse(res);
-                xfailed = xfailed.error;
+
+    var createIndexes = function() {
+
+        var _indexes = require('./indexes.json');
+
+        var _req = function(method, name, body) {
+
+            var options = {
+                headers: {},
+                method: method,
+                data: body
+            };
+
+            return util.request(component.info.url + "/" + name + "/", options);
+        };
+
+        var Index = {
+            exists: function(name) {
+                return _req("HEAD", name);
+            },
+            delete: function(name) {
+                logger.debug("Removing index %s", name);
+                return _req("DELETE", name);
+            },
+            create: function(name, body) {
+                logger.debug("Creating index %s", name);
+                return _req("PUT", name, body);
             }
-            catch(e) {}
-
-            if(res instanceof Error || xfailed) return fail(res);
-
-            console.log("ok", res);
-            restartCouchbaseXdcr();
-        });
-    };
-
-    var _check = function(err, res) {
-
-        if(err) {
-            _failed = true;
-            fail(err);
-            return;
-        }
-
-        cnt++;
-        if(cnt === len) {
-            !_failed && _createCouchbaseDocTemplate();
-        }
-    };
-
-
-    var _req = function(method, name, then, __then) {
-
-        var body = null;
-        if(typeof __then === 'function') {
-            body = then;
-            then = __then;
-        }
-
-        then = then || function(err, res) {
-            if(err) throw err;
         };
 
-        var options = {
-            headers: {},
-            method: method,
-            data: body,
-        };
+        return Promise.all(Object.keys(_indexes)).each(function(name) {
 
-        restler.request(component.info.url + "/" + name + "/", options).on("complete", then);
-    };
+            logger.debug("Delete index %s", name);
+            return Index.delete(name).then(function(res) {
 
-    var Index = {
-        exists: function(name, then) {
-            _req("HEAD", name, then);
-        },
-        delete: function(name, then) {
-            console.log("Removing index %s", name);
-            _req("DELETE", name, then);
-        },
-        create: function(name, body, then) {
-            console.log("Creating index %s", name);
-            _req("PUT", name, body, then);
-        }
-    };
+                logger.debug("Create index %s", name);
+                return Index.create(name, _indexes[name], function(res) {
 
-    keys.forEach(function(name) {
-
-        if(_failed) return;
-
-            console.log("Delete index %s", name);
-            Index.delete(name, function(res) {
-
-                if(res instanceof Error) throw res;
-
-                console.log("Create index %s", name);
-                Index.create(name, indexes[name], function(res) {
-
-                    if(res instanceof Error) throw res;
-
-//                    console.log(res);
-                    _check();
-
+                    logger.debug("Ok for %s", name);
+                    return Promise.resolve();
                 });
             });
+        });
 
-    });
+    };
 
+    return createIndexes()
+            .then(createCouchbaseDocTemplate)
+            .then(restartCouchbaseXdcr);
 };

@@ -12,7 +12,9 @@ lib.info = {
     command: "/etc/init.d/couchbase-server",
 
     url: "http://localhost:8091",
-    url_cluster: "http://localhost:8091",
+    url2: "http://localhost:8092",
+
+    url_cluster: "http://servioticy.local:8091",
 
     cluster: "localhost",
     user: "admin",
@@ -37,6 +39,13 @@ lib.info = {
                 fromBucket: "soupdates",
                 toCluster: "serviolastic",
                 toBucket:"soupdates",
+                replicationType: "continuous",
+                type: "capi"
+            },
+            {
+                fromBucket: "serviceobjects",
+                toCluster: "serviolastic",
+                toBucket:"sodescriptions",
                 replicationType: "continuous",
                 type: "capi"
             }

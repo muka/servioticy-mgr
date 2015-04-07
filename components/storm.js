@@ -55,6 +55,8 @@ lib.start = function() {
     var out = require('fs').openSync(lib.info.logFile, 'w');
 
     console.log("cwd is ", lib.info.stormHome);
+    console.log("log file is ", lib.info.logFile);
+
     console.log("Launch ", [ lib.info.command,
         "jar", lib.info.dispatcherHome + "/" + lib.info.dispatcherJar,
         "com.servioticy.dispatcher.DispatcherTopology",

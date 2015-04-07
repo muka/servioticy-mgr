@@ -204,6 +204,44 @@
                                 "include_in_all": false
                             }
                         }
+                    },
+                    {
+                        "name": {
+                            "path_match": "doc.name",
+                            "mapping": {
+                                "index": "not_analyzed",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "userId": {
+                            "path_match": "doc.userId",
+                            "mapping": {
+                                "index": "not_analyzed",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "description": {
+                            "path_match": "doc.description",
+                            "mapping": {
+                                "store": "no",
+                                "index": "not_analyzed",
+                                "type": "string"
+                            }
+                        }
+                    },
+                    {
+                        "customFields": {
+                            "path_match": "doc.customFields",
+                            "mapping": {
+                                "store": "no",
+                                "index": "not_analyzed",
+                                "type": "object"
+                            }
+                        }
                     }
                 ]
             },
@@ -228,6 +266,9 @@
                             },
                             "description": {
                                 "type": "string"
+                            },
+                            "customFields": {
+                                "type": "object"
                             }
                         }
                     },
