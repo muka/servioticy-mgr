@@ -85,5 +85,16 @@ module.exports.run = function(component, success, fail) {
 
     return createIndexes()
             .then(createCouchbaseDocTemplate)
-            .then(restartCouchbaseXdcr);
+            .then(restartCouchbaseXdcr)
+            .catch(function(e) {
+                logger.error("Error occured");
+                logger.error(e);
+                return Promise.reject(e);
+            })
+            .then(function(v) {
+                logger.error("Completed");
+                return Promise.resolve(v);
+            })
+	    .catch(fail).then(success)
+    ;
 };
