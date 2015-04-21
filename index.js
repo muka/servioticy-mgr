@@ -45,6 +45,9 @@ module.exports.config = function(_conf) {
 
             return Promise.all(list)
                 .filter(function(component) {
+                    return !(component.disabled === true);
+                })
+                .filter(function(component) {
 
                     if(!component_name) {
                         return true;

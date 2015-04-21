@@ -10,7 +10,7 @@ lib.info = {
     name: "kestrel",
     priority: 350,
 
-    kestrelHome: "/opt/kestrel-2.4.1/",
+    kestrelHome: "/opt/servioticy/kestrel-2.4.1/",
     javaHome: "/usr/lib/jvm/java-7-oracle",
     logFile: '/tmp/kestrel.log',
 

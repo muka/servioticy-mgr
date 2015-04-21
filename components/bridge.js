@@ -10,7 +10,7 @@ lib.info = {
     name: "bridge",
     priority: 500,
 
-    cwd: "/opt/servioticy-bridge",
+    cwd: "/opt/servioticy/servioticy-bridge",
 
     script_name: "mqtt-and-stomp-bridge.js",
 

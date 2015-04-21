@@ -7,6 +7,9 @@ var util = require('../lib/util');
 
 lib.info = {
 
+    // disabled in security branch
+    disabled: true,
+
     name: "userDB",
     priority: 150,
 

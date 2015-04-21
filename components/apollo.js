@@ -9,7 +9,7 @@ lib.info = {
 
     name: "apollo",
     priority: 300,
-    command: "/opt/servibroker/bin/apollo-broker",
+    command: "/opt/servioticy/servibroker/bin/apollo-broker",
 
     url: "http://localhost:8080",
 
