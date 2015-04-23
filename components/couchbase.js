@@ -57,6 +57,7 @@ lib.info = {
         "actuations",
         "soupdates",
         "subscriptions",
+        "reputation",
     ],
 
     views: {
