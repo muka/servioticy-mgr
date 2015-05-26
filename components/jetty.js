@@ -12,9 +12,8 @@ lib.info = {
     
     command: "/etc/init.d/jetty",
 
-    url: "http://localhost:8080",
-
-    waitPort: 8080,
+    url: "http://localhost:8070",
+    waitPort: 8070,
 };
 
 lib.setup = function(component) {
