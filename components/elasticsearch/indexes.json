@@ -209,7 +209,6 @@
                         "name": {
                             "path_match": "doc.name",
                             "mapping": {
-                                "index": "not_analyzed",
                                 "type": "string"
                             }
                         }
@@ -218,8 +217,8 @@
                         "userId": {
                             "path_match": "doc.userId",
                             "mapping": {
-                                "index": "not_analyzed",
-                                "type": "string"
+                                "type": "string",
+                                "analyzer": "keyword"
                             }
                         }
                     },
@@ -228,7 +227,6 @@
                             "path_match": "doc.description",
                             "mapping": {
                                 "store": "no",
-                                "index": "not_analyzed",
                                 "type": "string"
                             }
                         }
@@ -238,7 +236,6 @@
                             "path_match": "doc.customFields",
                             "mapping": {
                                 "store": "no",
-                                "index": "not_analyzed",
                                 "type": "object"
                             }
                         }
@@ -269,6 +266,10 @@
                             },
                             "customFields": {
                                 "type": "object"
+                            },
+                            "userId": {
+                                "type": "string",
+                                "analyzer": "keyword"
                             }
                         }
                     },
@@ -276,8 +277,13 @@
                         "properties": {
                             "id": {
                                 "type": "string",
-                                "analyzer": "whitespace"
-                            }
+                                "index" : "not_analyzed",
+                                "include_in_all": false
+                            },
+                            "userId": {
+                                "type": "string",
+                                "analyzer": "keyword"
+                            }                            
                         }
                     }
                 }
