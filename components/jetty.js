@@ -26,7 +26,7 @@ lib.ready = function() {
 };
 
 lib.status = function() {
-    var search_pattern = "java.*jetty";
+    var search_pattern = "jetty\/start.jar";
     return util.ps(search_pattern);
 };
 
