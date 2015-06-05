@@ -25,7 +25,7 @@ lib.ready = function() {
 };
 
 lib.status = function() {
-    var search_pattern = "internal-broker";
+    var search_pattern = "internal.broker";
     return util.ps(search_pattern);
 };
 
@@ -38,7 +38,7 @@ lib.stop = function() {
 
     return util.execute("ps", ["aux"]).then(function(raw) {
 
-        var pattern = /([a-z0-9]+)[ ]*([a-z0-9]+)[ ]*.*internal-broker/i;
+        var pattern = /([a-z0-9]+)[ ]*([a-z0-9]+)[ ]*.*internal.broker/i;
         var pids = [];
 
         var response = raw.split("\n");
