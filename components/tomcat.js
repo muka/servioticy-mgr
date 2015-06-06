@@ -6,17 +6,14 @@ var child_process = require('child_process');
 var util = require('../lib/util');
 
 lib.info = {
-    
-    // disabled in favour of tomcat
-    disabled: true,
-    
-    name: "jetty",
-    priority: 200,
-    
-    command: "service jetty",
 
-    url: "http://localhost:8070",
-    waitPort: 8070,
+    name: "tomcat",
+    priority: 210,
+    
+    command: "service tomcat7",
+
+    url: "http://localhost:8080",
+    waitPort: 8080,
 };
 
 lib.setup = function(component) {
