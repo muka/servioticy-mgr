@@ -13,7 +13,7 @@ lib.info = {
     name: "jetty",
     priority: 200,
     
-    command: "service jetty",
+    command: "/etc/init.d/jetty",
 
     url: "http://localhost:8070",
     waitPort: 8070,

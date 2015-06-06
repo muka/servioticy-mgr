@@ -56,6 +56,11 @@ module.exports.config = function(_conf) {
                     return component.name === component_name;
                 })
                 .each(function(component) {
+                    
+                    if(component.info.disabled) {
+                        console.info("[%s] %s is disabled, skipping", component.priority, component.name);                        
+                        return Promise.resolve();
+                    }
 
                     component.lib = lib;
 

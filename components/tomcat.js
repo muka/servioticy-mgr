@@ -10,7 +10,7 @@ lib.info = {
     name: "tomcat",
     priority: 210,
     
-    command: "service tomcat7",
+    command: "/etc/init.d/tomcat7",
 
     url: "http://localhost:8080",
     waitPort: 8080,
@@ -26,7 +26,7 @@ lib.ready = function() {
 };
 
 lib.status = function() {
-    var search_pattern = "jetty\/start.jar";
+    var search_pattern = "catalina.*tomcat";
     return util.ps(search_pattern);
 };
 

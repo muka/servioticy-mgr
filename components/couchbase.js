@@ -78,7 +78,7 @@ lib.ready = function() {
 };
 
 lib.status = function() {
-    var search_pattern = "couchbase\/lib";
+    var search_pattern = "couchbase\\/lib\\/erlang";
     return util.ps(search_pattern);
 };
 
