@@ -67,21 +67,11 @@
                         "properties": {
                             "id": {
                                 "type": "string",
-                                "analyzer": "id_prefix"
+                                "analyzer": "whitespace"
                             }
                         }
                     }
-                },
-                "settings": {
-                    "analysis": {
-                        "analyzer": {
-                            "id_prefix": {
-                                "type": "pattern",
-                                "pattern": "[a-zA-Z0-9]\\-[a-zA-Z0-9](\\-[0-9]+)"
-                            }
-                        }
-                    }
-                }                
+                }
             }
         }
     },
