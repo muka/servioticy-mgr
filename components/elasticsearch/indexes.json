@@ -242,7 +242,7 @@
                     }
                 ]
             },
-            "couchbaseDocument": {                    
+            "couchbaseDocument": {
                 "_all": {
                     "enabled": false
                 },
@@ -279,13 +279,13 @@
                         "properties": {
                             "id": {
                                 "type": "string",
-                                "index" : "not_analyzed",
+                                "index": "not_analyzed",
                                 "include_in_all": false
                             },
                             "userId": {
                                 "type": "string",
                                 "analyzer": "keyword"
-                            }                            
+                            }
                         }
                     }
                 }
