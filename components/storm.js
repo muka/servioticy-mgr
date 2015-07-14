@@ -11,7 +11,7 @@ lib.info = {
     priority: 400,
 
     command: 'bin/storm',
-    stormHome: "/opt/servioticy/apache-storm-0.9.2-incubating",
+    stormHome: "/opt/servioticy/apache-storm-0.9.4",
     dispatcherHome: "/opt/servioticy/servioticy-dispatcher",
 
     dispatcherJar: "dispatcher.jar",
