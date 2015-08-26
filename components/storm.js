@@ -69,7 +69,10 @@ lib.start = function() {
         "jar", lib.info.dispatcherHome + "/" + lib.info.dispatcherJar,
         "com.servioticy.dispatcher.DispatcherTopology",
         "-f", lib.info.dispatcherHome + "/" + lib.info.dispatcherXml,
-        "-d"
+        // enable debug mode
+        // "-d"
+        // enable cluster deployment
+        "-t", "servioticy"
     ], {
         cwd: lib.info.stormHome,
         env: _env,
