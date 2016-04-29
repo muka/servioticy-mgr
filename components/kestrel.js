@@ -6,7 +6,7 @@ var child_process = require('child_process');
 var util = require('../lib/util');
 
 lib.info = {
-
+    disabled: true,
     name: "kestrel",
     priority: 350,
 
